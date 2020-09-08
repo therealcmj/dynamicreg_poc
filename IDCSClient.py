@@ -20,6 +20,11 @@ class IDCSClient:
     oauthClient = None
 
     def __init__(self, idcsURL, clientID, clientSecret):
+        logging.debug("Initializing IDCS client with the following params:")
+        logging.debug("IDCS URL: {}".format(idcsURL))
+        logging.debug("Client ID: {}".format(clientID))
+        logging.debug("Client Secret: {}".format(clientSecret))
+
         self.idcsUrl = idcsURL
         # save these just in case
         self.clientID = clientID
