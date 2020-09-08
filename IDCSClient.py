@@ -7,9 +7,9 @@ from oauthlib.oauth2 import BackendApplicationClient
 from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth2Session
 
-# debug HTTP
-import http.client as http_client
-http_client.HTTPConnection.debuglevel = 1
+# # debug HTTP
+# import http.client as http_client
+# http_client.HTTPConnection.debuglevel = 1
 
 class IDCSClient:
     idcsUrl = None
