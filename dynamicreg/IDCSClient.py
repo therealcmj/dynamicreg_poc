@@ -44,6 +44,7 @@ class IDCSClient:
         return
 
     def GetUsers(self):
+        logging.debug("GetUsers() called")
         response = self.oauthClient.get(self.idcsUrl + "/admin/v1/Users")
         print("Status code: {}".format(response.status_code))
         if response.ok:
@@ -52,6 +53,7 @@ class IDCSClient:
             print( "Error!" )
 
     def GetApps(self):
+        logging.debug("GetApps() called")
         response = self.oauthClient.get(self.idcsUrl + "/admin/v1/Apps")
         print("Status code: {}".format(response.status_code))
         if response.ok:
@@ -59,20 +61,8 @@ class IDCSClient:
         else:
             print( "Error!" )
 
-    def GetAppsPost(self):
-        response = self.oauthClient.post(self.idcsUrl + "/admin/v1/Apps/.search",
-                                         json=json.dumps({
-                                             "schemas": [ "urn:ietf:params:scim:api:messages:2.0:SearchRequest" ]
-                                                        })
-                                         )
-        print("Status code: {}".format(response.status_code))
-        if response.ok:
-            print( "Response indicates success" )
-        else:
-            print( "Error!" )
-
-
     def CreateApp(self, clientName, redirectUris):
+        logging.debug("CreateApp() called")
         appPayload = {
             "displayName": clientName,
             "redirectUris": redirectUris,
@@ -95,16 +85,18 @@ class IDCSClient:
 
         createResponse = self._sendRequest( "POST", "/admin/v1/Apps", appPayload )
 
+        logging.debug("Getting id from response")
         id = createResponse.get("id")
         if not id:
+            logging.debug("ID not present in response!")
             raise Exception("Failed to get ID for newly created app!" )
 
         # we need client ID, secret
-
-
+        logging.debug("Activating newly created app with id {}".format(id))
         appActivatePayload = {"active": True, "schemas": ["urn:ietf:params:scim:schemas:oracle:idcs:AppStatusChanger"]}
         activateResponse = self._sendRequest( "PUT", "/admin/v1/AppStatusChanger/" + id, appActivatePayload )
 
+        logging.debug("Returning client ID + client secret")
         return (createResponse.get("name"), createResponse.get("clientSecret"))
 
     def _sendRequest(self, verb, uri, jsonpayload):

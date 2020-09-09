@@ -20,9 +20,10 @@ def handler(ctx, data: io.BytesIO=None):
     statuscode = 500
     responseBody = {}
 
-    logging.getLogger().info( json.dumps(dict(ctx.Config())))
+    # logging.getLogger().info( json.dumps(dict(ctx.Config())))
 
     try:
+        logging.debug("Parsing post payload: '{}'".format(data.getvalue()))
         requestBody = json.loads(data.getvalue())
     except (Exception, ValueError) as ex:
         logging.getLogger().info('error parsing json payload: ' + str(ex))
@@ -43,6 +44,9 @@ def handler(ctx, data: io.BytesIO=None):
         # I'm ignoring that because I don't want to pollute IDCS with lots of bad clients
         raise Exception( "Only client_basic_secret is supported for token_endpoint_auth_method" )
     else:
+        logging.debug("Creating app with the following params:")
+        logging.debug("Client Name: {}".format(clientName))
+        logging.debug("Redirect URLs: {}".format(json.dumps(redirect_uris)))
         (id, secret) = client.CreateApp(clientName, redirect_uris)
 
         print("Client ID     : {}".format(id))
